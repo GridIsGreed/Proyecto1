@@ -1,0 +1,49 @@
+using System;
+
+namespace DamasChinas
+{
+    // 1. Definimos los tipos de casillas y piezas usando un Enum
+    public enum Pieza
+    {
+        Vacia = 0,
+        PeonBlanco = 1,
+        PeonNegro = 2,
+        ReinaBlanca = 3,
+        ReinaNegra = 4
+    }
+
+    class Tablero
+    {
+        // 2. Creamos una matriz (arreglo bidimensional) de 8x8
+        private Pieza[,] casillas;
+
+        public Tablero()
+        {
+            // Inicializamos el tamaño de la matriz
+            casillas = new Pieza[8, 8];
+            LimpiarTablero();
+        }
+
+        private void LimpiarTablero()
+        {
+            // 3. Recorremos filas y columnas para asegurar que todo esté vacío
+            for (int fila = 0; fila < 8; fila++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    casillas[fila, col] = Pieza.Vacia;
+                }
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Tablero miTablero = new Tablero();
+            Console.WriteLine("Tablero de 8x8 creado y limpio en memoria.");
+            Console.ReadLine();
+        }
+    }
+}

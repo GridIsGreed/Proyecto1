@@ -66,12 +66,25 @@ namespace DamasChinas
         }
     }
 
+    // Método para mostrar el tablero en consola
+    public void MostrarTablero()
+    {
+        for (int fila = 0; fila < 8; fila++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                Console.Write((int)casillas[fila, col] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+    
         class Program
         {
              static void Main(string[] args)
              {
                  Tablero miTablero = new Tablero();
-                 Console.WriteLine("Tablero de 8x8 creado y limpio en memoria.");
+                 miTablero.MostrarTablero();
                  Console.ReadLine();
              }
         }

@@ -69,6 +69,7 @@ namespace DamasChinas
     // Método para mostrar el tablero en consola
     public void MostrarTablero()
     {
+        Console.Clear();
         for (int fila = 0; fila < 8; fila++)
         {
             for (int col = 0; col < 8; col++)

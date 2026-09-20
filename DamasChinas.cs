@@ -22,6 +22,8 @@ namespace DamasChinas
             // Inicializamos el tamaño de la matriz
             casillas = new Pieza[8, 8];
             LimpiarTablero();
+            // Llamamos a la colocación inicial
+            InicializarFichas();
         }
 
         private void LimpiarTablero()
@@ -35,15 +37,43 @@ namespace DamasChinas
                 }
             }
         }
+
+    // Colocar las 12 piezas de cada jugador en las posiciones iniciales
+    private void InicializarFichas()
+    {
+        // Colocamos las piezas negras en las primeras 3 filas
+        for (int fila = 0; fila < 3; fila++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if ((fila + col) % 2 == 1) // Solo en casillas negras
+                {
+                    casillas[fila, col] = Pieza.PeonNegro;
+                }
+            }
+        }
+
+        // Colocamos las piezas blancas en las últimas 3 filas
+        for (int fila = 5; fila < 8; fila++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if ((fila + col) % 2 == 1) // Solo en casillas negras
+                {
+                    casillas[fila, col] = Pieza.PeonBlanco;
+                }
+            }
+        }
     }
 
-    class Program
-    {
-        static void Main(string[] args)
+        class Program
         {
-            Tablero miTablero = new Tablero();
-            Console.WriteLine("Tablero de 8x8 creado y limpio en memoria.");
-            Console.ReadLine();
+             static void Main(string[] args)
+             {
+                 Tablero miTablero = new Tablero();
+                 Console.WriteLine("Tablero de 8x8 creado y limpio en memoria.");
+                 Console.ReadLine();
+             }
         }
     }
 }

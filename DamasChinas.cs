@@ -132,30 +132,77 @@ namespace DamasChinas
             int difFila = fDestino - fOrigen;
             int difCol = Math.Abs(cDestino - cOrigen);
 
-            if (difCol != 1)
+            // Validar desplazamiento horizontal diagonal
+            if (difCol != 1 && difCol != 2)
             {
-                Console.WriteLine("\n[Error] Los peones solo se mueven 1 casilla en diagonal.");
+                Console.WriteLine("\n[Error] Movimiento diagonal inválido (solo puedes mover 1 casilla o saltar 2).");
                 return false;
             }
 
-            if (piezaOrigen == Pieza.PeonNegro && difFila != 1)
+            // CASO 1: Movimiento simple de 1 casilla
+            if (difCol == 1)
             {
-                Console.WriteLine("\n[Error] Los peones negros solo pueden avanzar hacia abajo (+1 fila).");
-                return false;
+                if (piezaOrigen == Pieza.PeonNegro && difFila != 1)
+                {
+                    Console.WriteLine("\n[Error] Los peones negros solo pueden avanzar hacia abajo (+1 fila).");
+                    return false;
+                }
+
+                if (piezaOrigen == Pieza.PeonBlanco && difFila != -1)
+                {
+                    Console.WriteLine("\n[Error] Los peones blancos solo pueden avanzar hacia arriba (-1 fila).");
+                    return false;
+                }
+
+                // Movimiento simple válido
+                casillas[fDestino, cDestino] = piezaOrigen;
+                casillas[fOrigen, cOrigen] = Pieza.Vacia;
+                return true;
             }
 
-            if (piezaOrigen == Pieza.PeonBlanco && difFila != -1)
+            // CASO 2: Intento de captura / salto (2 casillas)
+            if (difCol == 2)
             {
-                Console.WriteLine("\n[Error] Los peones blancos solo pueden avanzar hacia arriba (-1 fila).");
-                return false;
+                // Validar dirección del salto para peones
+                if (piezaOrigen == Pieza.PeonNegro && difFila != 2)
+                {
+                    Console.WriteLine("\n[Error] Los peones negros solo pueden capturar hacia abajo (+2 filas).");
+                    return false;
+                }
+
+                if (piezaOrigen == Pieza.PeonBlanco && difFila != -2)
+                {
+                    Console.WriteLine("\n[Error] Los peones blancos solo pueden capturar hacia arriba (-2 filas).");
+                    return false;
+                }
+
+                // Calcular las coordenadas de la casilla intermedia
+                int filaIntermedia = (fOrigen + fDestino) / 2;
+                int colIntermedia = (cOrigen + cDestino) / 2;
+                Pieza piezaIntermedia = casillas[filaIntermedia, colIntermedia];
+
+                // Verificar si hay una ficha enemiga en medio
+                bool esEnemigo = turnoBlanco ? 
+                    (piezaIntermedia == Pieza.PeonNegro || piezaIntermedia == Pieza.ReinaNegra) : 
+                    (piezaIntermedia == Pieza.PeonBlanco || piezaIntermedia == Pieza.ReinaBlanca);
+
+                if (!esEnemigo)
+                {
+                    Console.WriteLine("\n[Error] No hay ninguna ficha enemiga para capturar en ese salto.");
+                    return false;
+                }
+
+                // Realizar la captura: Mover pieza, vaciar casilla origen y vaciar casilla intermedia
+                casillas[fDestino, cDestino] = piezaOrigen;
+                casillas[fOrigen, cOrigen] = Pieza.Vacia;
+                casillas[filaIntermedia, colIntermedia] = Pieza.Vacia; // ¡Ficha comida!
+
+                Console.WriteLine("\n¡Ficha capturada con éxito!");
+                return true;
             }
 
-            // Si pasa todas las reglas, realizamos el movimiento
-            casillas[fDestino, cDestino] = piezaOrigen;
-            casillas[fOrigen, cOrigen] = Pieza.Vacia;
-            return true;
-        }
-        
+            return false;
+        }        
          class Program
         {
             static void Main(string[] args)
@@ -206,7 +253,7 @@ namespace DamasChinas
                     // Intentamos convertir el texto ingresado a un número de 0 a 7
                     if (int.TryParse(entrada, out numero) && numero >= 0 && numero <= 7)
                     {
-                        return numero; // Entrada válida, devolvemos el valor
+                        return numero; 
                     }
 
                     Console.WriteLine("¡Entrada inválida! Ingresa un número entero entre 0 y 7.");

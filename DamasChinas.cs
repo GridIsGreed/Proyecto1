@@ -2,7 +2,7 @@ using System;
 
 namespace DamasChinas
 {
-    // 1. Definimos los tipos de casillas y piezas usando un Enum
+    // Definimos los tipos de casillas y piezas usando un Enum
     public enum Pieza
     {
         Vacia = 0,
@@ -14,7 +14,7 @@ namespace DamasChinas
 
     class Tablero
     {
-            // 2. Creamos una matriz (arreglo bidimensional) de 8x8
+            // Creamos una matriz (arreglo bidimensional) de 8x8
             private Pieza[,] casillas;
 
             public Tablero()
@@ -28,7 +28,7 @@ namespace DamasChinas
 
             private void LimpiarTablero()
             {
-                // 3. Recorremos filas y columnas para asegurar que todo esté vacío
+                // Recorremos filas y columnas para asegurar que todo esté vacío
                 for (int fila = 0; fila < 8; fila++)
                 {
                     for (int col = 0; col < 8; col++)
@@ -98,38 +98,46 @@ namespace DamasChinas
             }
         }
 
-        // Lógica para validar y mover una ficha
-        public bool MoverPieza(int fOrigen, int cOrigen, int fDestino, int cDestino)
+        // Valida a cuál jugador le pertenece la ficha
+        public bool MoverPieza(int fOrigen, int cOrigen, int fDestino, int cDestino, bool turnoBlanco)
         {
             Pieza piezaOrigen = casillas[fOrigen, cOrigen];
             Pieza piezaDestino = casillas[fDestino, cDestino];
 
-            // 1. Validar que haya una pieza en el origen
             if (piezaOrigen == Pieza.Vacia)
             {
                 Console.WriteLine("\n[Error] No hay ninguna ficha en la casilla seleccionada.");
                 return false;
             }
 
-            // 2. Validar que el destino esté completamente libre
+            // Validar propiedad de la pieza según el turno
+            if (turnoBlanco && (piezaOrigen != Pieza.PeonBlanco && piezaOrigen != Pieza.ReinaBlanca))
+            {
+                Console.WriteLine("\n[Error] Es el turno de las Blancas. Debes elegir una ficha blanca.");
+                return false;
+            }
+
+            if (!turnoBlanco && (piezaOrigen != Pieza.PeonNegro && piezaOrigen != Pieza.ReinaNegra))
+            {
+                Console.WriteLine("\n[Error] Es el turno de las Negras. Debes elegir una ficha negra.");
+                return false;
+            }
+
             if (piezaDestino != Pieza.Vacia)
             {
                 Console.WriteLine("\n[Error] La casilla de destino está ocupada.");
                 return false;
             }
 
-            // 3. Calcular desplazamientos (Math.Abs obtiene el valor absoluto/positivo)
             int difFila = fDestino - fOrigen;
             int difCol = Math.Abs(cDestino - cOrigen);
 
-            // 4. Validar movimiento diagonal simple de 1 casilla (columna cambia en 1)
             if (difCol != 1)
             {
                 Console.WriteLine("\n[Error] Los peones solo se mueven 1 casilla en diagonal.");
                 return false;
             }
 
-            // 5. Validar la dirección según el tipo de peón
             if (piezaOrigen == Pieza.PeonNegro && difFila != 1)
             {
                 Console.WriteLine("\n[Error] Los peones negros solo pueden avanzar hacia abajo (+1 fila).");
@@ -142,7 +150,7 @@ namespace DamasChinas
                 return false;
             }
 
-            // 6. Si pasó todas las reglas, ejecutamos el movimiento
+            // Si pasa todas las reglas, realizamos el movimiento
             casillas[fDestino, cDestino] = piezaOrigen;
             casillas[fOrigen, cOrigen] = Pieza.Vacia;
             return true;
@@ -153,11 +161,18 @@ namespace DamasChinas
             static void Main(string[] args)
             {
                 Tablero miTablero = new Tablero();
+
+                // Variable para controlar de quién es el turno (inician las Blancas por regla estándar)
+                bool turnoBlanco = true;
+
                 while (true)
                 {
                     miTablero.MostrarTablero();
-                    Console.WriteLine("--- TURNO DE JUEGO ---");
-                    // Aquí podrías agregar la lógica para mover piezas.
+
+                   // Mostramos en pantalla de quién es el turno
+                   string jugadorActual = turnoBlanco ? "BLANCAS (B)" : "NEGRAS (N)";
+                   Console.WriteLine($"--- Turno de las {jugadorActual} ---");
+
                     int fOrigen = PedirCoordenada("Fila de la ficha a mover (0-7): ");
                     int cOrigen = PedirCoordenada("Columna de la ficha a mover (0-7): ");
                         
@@ -165,11 +180,16 @@ namespace DamasChinas
                     int cDestino = PedirCoordenada("Columna destino (0-7): ");
 
                     // Intentamos ejecutar el movimiento
-                    bool exito = miTablero.MoverPieza(fOrigen, cOrigen, fDestino, cDestino);
+                    bool exito = miTablero.MoverPieza(fOrigen, cOrigen, fDestino, cDestino, turnoBlanco);
 
                     if (!exito)
                     {
-                      Console.WriteLine("Presiona Enter para reintentar...");
+                      // Si el movimiento fue válido, cambiamos de turno
+                      turnoBlanco = !turnoBlanco;
+                    }
+                    else
+                    {
+                      Console.WriteLine("Presiona Enter para reintentar tu turno...");
                       Console.ReadLine();
                     }
                 }

@@ -131,8 +131,18 @@ namespace DamasChinas
 
             int difFila = fDestino - fOrigen;
             int difCol = Math.Abs(cDestino - cOrigen);
+            int absDifFila = Math.Abs(difFila);
 
-            // Validar desplazamiento horizontal diagonal
+            // Saber si la pieza actual es una Reina
+            bool esReina = (piezaOrigen == Pieza.ReinaBlanca || piezaOrigen == Pieza.ReinaNegra);
+
+            // Validar que el desplazamiento sea simétrico en diagonal (filas pasadas = columnas pasadas)
+            if (absDifFila != difCol)
+            {
+                Console.WriteLine("\n[Error] El movimiento debe ser diagonal.");
+                return false;
+            }
+
             if (difCol != 1 && difCol != 2)
             {
                 Console.WriteLine("\n[Error] Movimiento diagonal inválido (solo puedes mover 1 casilla o saltar 2).");
@@ -142,19 +152,23 @@ namespace DamasChinas
             // CASO 1: Movimiento simple de 1 casilla
             if (difCol == 1)
             {
-                if (piezaOrigen == Pieza.PeonNegro && difFila != 1)
+                // Si NO es Reina, aplicamos la restricción de sentido único de los peones
+                if (!esReina)
                 {
-                    Console.WriteLine("\n[Error] Los peones negros solo pueden avanzar hacia abajo (+1 fila).");
-                    return false;
+                    if (piezaOrigen == Pieza.PeonNegro && difFila != 1)
+                    {
+                        Console.WriteLine("\n[Error] Los peones negros solo pueden avanzar hacia abajo (+1 fila).");
+                        return false;
+                    }
+
+                    if (piezaOrigen == Pieza.PeonBlanco && difFila != -1)
+                    {
+                        Console.WriteLine("\n[Error] Los peones blancos solo pueden avanzar hacia arriba (-1 fila).");
+                        return false;
+                    }
                 }
 
-                if (piezaOrigen == Pieza.PeonBlanco && difFila != -1)
-                {
-                    Console.WriteLine("\n[Error] Los peones blancos solo pueden avanzar hacia arriba (-1 fila).");
-                    return false;
-                }
-
-                // --- VALIDACIÓN Y APLICACIÓN DE CORONACIÓN ---
+                // Aplicar coronación si un Peón llega al extremo opuesto
                 if (piezaOrigen == Pieza.PeonBlanco && fDestino == 0)
                 {
                     casillas[fDestino, cDestino] = Pieza.ReinaBlanca;
@@ -177,25 +191,26 @@ namespace DamasChinas
             // CASO 2: Intento de captura / salto (2 casillas)
             if (difCol == 2)
             {
-                // Validar dirección del salto para peones
-                if (piezaOrigen == Pieza.PeonNegro && difFila != 2)
+                // Si NO es Reina, los peones solo pueden capturar hacia adelante
+                if (!esReina)
                 {
-                    Console.WriteLine("\n[Error] Los peones negros solo pueden capturar hacia abajo (+2 filas).");
-                    return false;
+                    if (piezaOrigen == Pieza.PeonNegro && difFila != 2)
+                    {
+                        Console.WriteLine("\n[Error] Los peones negros solo pueden capturar hacia abajo (+2 filas).");
+                        return false;
+                    }
+
+                    if (piezaOrigen == Pieza.PeonBlanco && difFila != -2)
+                    {
+                        Console.WriteLine("\n[Error] Los peones blancos solo pueden capturar hacia arriba (-2 filas).");
+                        return false;
+                    }
                 }
 
-                if (piezaOrigen == Pieza.PeonBlanco && difFila != -2)
-                {
-                    Console.WriteLine("\n[Error] Los peones blancos solo pueden capturar hacia arriba (-2 filas).");
-                    return false;
-                }
-
-                // Calcular las coordenadas de la casilla intermedia
                 int filaIntermedia = (fOrigen + fDestino) / 2;
                 int colIntermedia = (cOrigen + cDestino) / 2;
                 Pieza piezaIntermedia = casillas[filaIntermedia, colIntermedia];
 
-                // Verificar si hay una ficha enemiga en medio
                 bool esEnemigo = turnoBlanco ? 
                     (piezaIntermedia == Pieza.PeonNegro || piezaIntermedia == Pieza.ReinaNegra) : 
                     (piezaIntermedia == Pieza.PeonBlanco || piezaIntermedia == Pieza.ReinaBlanca);
@@ -206,16 +221,16 @@ namespace DamasChinas
                     return false;
                 }
 
-                // --- CORONACIÓN AL CAPTURAR ---
+                // Coronación en captura
                 if (piezaOrigen == Pieza.PeonBlanco && fDestino == 0)
                 {
                     casillas[fDestino, cDestino] = Pieza.ReinaBlanca;
-                    Console.WriteLine("\n¡El peón blanco capturó y se ha coronado como REINA!");
+                    Console.WriteLine("\n¡El peón blanco llegó al final y se ha coronado como REINA!");
                 }
                 else if (piezaOrigen == Pieza.PeonNegro && fDestino == 7)
                 {
                     casillas[fDestino, cDestino] = Pieza.ReinaNegra;
-                    Console.WriteLine("\n¡El peón negro capturó y se ha coronado como REINA!");
+                    Console.WriteLine("\n¡El peón negro llegó al final y se ha coronado como REINA!");
                 }
                 else
                 {
@@ -223,7 +238,7 @@ namespace DamasChinas
                 }
 
                 casillas[fOrigen, cOrigen] = Pieza.Vacia;
-                casillas[filaIntermedia, colIntermedia] = Pieza.Vacia; // ¡Ficha comida!
+                casillas[filaIntermedia, colIntermedia] = Pieza.Vacia;
 
                 Console.WriteLine("\n¡Ficha capturada con éxito!");
                 return true;

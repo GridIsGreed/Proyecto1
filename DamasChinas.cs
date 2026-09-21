@@ -229,7 +229,7 @@ namespace DamasChinas
                     // Intentamos ejecutar el movimiento
                     bool exito = miTablero.MoverPieza(fOrigen, cOrigen, fDestino, cDestino, turnoBlanco);
 
-                    if (!exito)
+                    if (exito)
                     {
                       // Si el movimiento fue válido, cambiamos de turno
                       turnoBlanco = !turnoBlanco;

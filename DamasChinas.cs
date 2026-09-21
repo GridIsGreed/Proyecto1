@@ -154,8 +154,22 @@ namespace DamasChinas
                     return false;
                 }
 
-                // Movimiento simple válido
-                casillas[fDestino, cDestino] = piezaOrigen;
+                // --- VALIDACIÓN Y APLICACIÓN DE CORONACIÓN ---
+                if (piezaOrigen == Pieza.PeonBlanco && fDestino == 0)
+                {
+                    casillas[fDestino, cDestino] = Pieza.ReinaBlanca;
+                    Console.WriteLine("\n¡El peón blanco se ha coronado como REINA!");
+                }
+                else if (piezaOrigen == Pieza.PeonNegro && fDestino == 7)
+                {
+                    casillas[fDestino, cDestino] = Pieza.ReinaNegra;
+                    Console.WriteLine("\n¡El peón negro se ha coronado como REINA!");
+                }
+                else
+                {
+                    casillas[fDestino, cDestino] = piezaOrigen;
+                }
+
                 casillas[fOrigen, cOrigen] = Pieza.Vacia;
                 return true;
             }
@@ -192,8 +206,22 @@ namespace DamasChinas
                     return false;
                 }
 
-                // Realizar la captura: Mover pieza, vaciar casilla origen y vaciar casilla intermedia
-                casillas[fDestino, cDestino] = piezaOrigen;
+                // --- CORONACIÓN AL CAPTURAR ---
+                if (piezaOrigen == Pieza.PeonBlanco && fDestino == 0)
+                {
+                    casillas[fDestino, cDestino] = Pieza.ReinaBlanca;
+                    Console.WriteLine("\n¡El peón blanco capturó y se ha coronado como REINA!");
+                }
+                else if (piezaOrigen == Pieza.PeonNegro && fDestino == 7)
+                {
+                    casillas[fDestino, cDestino] = Pieza.ReinaNegra;
+                    Console.WriteLine("\n¡El peón negro capturó y se ha coronado como REINA!");
+                }
+                else
+                {
+                    casillas[fDestino, cDestino] = piezaOrigen;
+                }
+
                 casillas[fOrigen, cOrigen] = Pieza.Vacia;
                 casillas[filaIntermedia, colIntermedia] = Pieza.Vacia; // ¡Ficha comida!
 

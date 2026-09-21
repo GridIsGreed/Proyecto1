@@ -103,9 +103,40 @@ namespace DamasChinas
              static void Main(string[] args)
              {
                  Tablero miTablero = new Tablero();
-                 miTablero.MostrarTablero();
-                 Console.ReadLine();
+                 while (true)
+                 {
+                     miTablero.MostrarTablero();
+                     Console.WriteLine("--- TURNO DE JUEGO ---");
+                    // Aquí podrías agregar la lógica para mover piezas.
+                     int fOrigen = PedirCoordenada("Fila de la ficha a mover (0-7): ");
+                     int cOrigen = PedirCoordenada("Columna de la ficha a mover (0-7): ");
+                
+                     int fDestino = PedirCoordenada("Fila destino (0-7): ");
+                     int cDestino = PedirCoordenada("Columna destino (0-7): ");
+
+                     Console.WriteLine($"\nIntentando mover de ({fOrigen}, {cOrigen}) a ({fDestino}, {cDestino})...");
+                     Console.WriteLine("Presiona Enter para continuar...");
+                     Console.ReadLine();
+                 }
              }
+            // Función auxiliar para capturar números válidos del teclado
+        static int PedirCoordenada(string mensaje)
+         {
+            int numero;
+            while (true)
+            {
+                Console.Write(mensaje);
+                string entrada = Console.ReadLine();
+
+                // Intentamos convertir el texto ingresado a un número de 0 a 7
+                if (int.TryParse(entrada, out numero) && numero >= 0 && numero <= 7)
+                {
+                    return numero; // Entrada válida, devolvemos el valor
+                }
+
+                Console.WriteLine("¡Entrada inválida! Ingresa un número entero entre 0 y 7.");
+            }
+         }
         }
     }
 }

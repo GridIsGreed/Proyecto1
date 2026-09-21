@@ -74,7 +74,25 @@ namespace DamasChinas
         {
             for (int col = 0; col < 8; col++)
             {
-                Console.Write((int)casillas[fila, col] + " ");
+                switch (casillas[fila, col])
+                    {
+                        case Pieza.Vacia:
+                            // Usamos '.' para casillas oscuras y ' ' para casillas claras
+                            Console.Write((fila + col) % 2 == 1 ? ". " : "  ");
+                            break;
+                        case Pieza.PeonBlanco:
+                            Console.Write("B ");
+                            break;
+                        case Pieza.PeonNegro:
+                            Console.Write("N ");
+                            break;
+                        case Pieza.ReinaBlanca:
+                            Console.Write("RB");
+                            break;
+                        case Pieza.ReinaNegra:
+                            Console.Write("RN");
+                            break;
+                    }
             }
             Console.WriteLine();
         }

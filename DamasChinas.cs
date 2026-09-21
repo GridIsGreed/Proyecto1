@@ -97,8 +97,28 @@ namespace DamasChinas
                 Console.WriteLine();
             }
         }
+        // Método para contar cuantas fichas le quedan a cada jugador
+        public void ContarPiezas(out int blancas, out int negras)
+        {
+            blancas = 0;
+            negras = 0;
 
-        // Valida a cuál jugador le pertenece la ficha
+            for (int fila = 0; fila < 8; fila++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (casillas[fila, col] == Pieza.PeonBlanco || casillas[fila, col] == Pieza.ReinaBlanca)
+                    {
+                        blancas++;
+                    }
+                    else if (casillas[fila, col] == Pieza.PeonNegro || casillas[fila, col] == Pieza.ReinaNegra)
+                    {
+                        negras++;
+                    }
+                }
+            }
+        }
+
         public bool MoverPieza(int fOrigen, int cOrigen, int fDestino, int cDestino, bool turnoBlanco)
         {
             Pieza piezaOrigen = casillas[fOrigen, cOrigen];
@@ -251,13 +271,27 @@ namespace DamasChinas
             static void Main(string[] args)
             {
                 Tablero miTablero = new Tablero();
-
                 // Variable para controlar de quién es el turno (inician las Blancas por regla estándar)
                 bool turnoBlanco = true;
 
                 while (true)
                 {
                     miTablero.MostrarTablero();
+                    // Contar piezas restantes y mostrar marcador
+                    miTablero.ContarPiezas(out int cantBlancas, out int cantNegras);
+                    Console.WriteLine($"\nFichas restantes -> Blancas: {cantBlancas} | Negras: {cantNegras}");
+
+                    // Comprobar condición de victoria
+                    if (cantBlancas == 0)
+                    {
+                        Console.WriteLine("\n¡LAS NEGRAS HAN GANADO LA PARTIDA!");
+                        break;
+                    }
+                    if (cantNegras == 0)
+                    {
+                        Console.WriteLine("\n¡LAS BLANCAS HAN GANADO LA PARTIDA!");
+                        break;
+                    }
 
                    // Mostramos en pantalla de quién es el turno
                    string jugadorActual = turnoBlanco ? "BLANCAS (B)" : "NEGRAS (N)";
